@@ -1,14 +1,19 @@
 package projjava.testprojjavafx;
 
+import javafx.animation.KeyValue;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
 
-public class HelloController{
+public class HelloController {
     @FXML
     private Label welcomeText;
     @FXML
@@ -17,68 +22,54 @@ public class HelloController{
     private TextArea textArea;
     @FXML
     private Text text;
-
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    private ProgressBar bar;
+    @FXML
+    private Button Hello;
+
+    CalcTask myTask; // экземпляр класса вычислений в контроллере
+
+    // стандартная реализация
+    @FXML
+    public void initialize() {
+        Hello.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (myTask != null && myTask.isRunning()) {
+                    myTask.cancel();
+                }
+
+                myTask = new CalcTask();
+                Thread thread = new Thread(myTask);
+                thread.setDaemon(true);
+                thread.start();
+
+                bar.progressProperty().bind(myTask.progressProperty());
+
+                Hello.disableProperty().bind(myTask.runningProperty());
+            }
+        });
     }
 
-    public void initialize(){
+    // альтернативная реализация
+    public void startTask(ActionEvent event) {
+        if (myTask != null && myTask.isRunning()) {
+            myTask.cancel();
+        }
 
+        myTask = new CalcTask();// инициализация экземпляра класса, где производятся вычисления
+        Thread thread = new Thread(myTask); // далее создается поток, в который помещается данный экземпляр
+        thread.setDaemon(true);
+        thread.start();
 
-        Service<Void> service = new Service<Void>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        for (int i = 0; i < 20; i++){
-//                            labelToCheck.setText(Integer.toString(i));
-                            text.setText(Integer.toString(i));
-                            Thread.sleep(150);
-//                            labelToCheck.requestFocus();
-//                            textArea.setText(Integer.toString(i));
-//                            Thread.sleep(150);
-                        }
-                        return null;
-                    }
-                };
-            }
-        };
+        bar.progressProperty().bind(myTask.progressProperty());
 
-
-//        Platform.runLater(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < 20; i++){
-//                    labelToCheck.setText(Integer.toString(i));
-//                    try {
-//                        Thread.sleep(250);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-
-        Service<Void> service1 = new Service<Void>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        test2class test = new test2class();
-                        test.run();
-                        return null;
-                    }
-                };
-            }
-        };
-
-        service.start();
-
-        service1.start();
+        Hello.disableProperty().bind(myTask.runningProperty());
     }
+
+    public void cancelTask(ActionEvent event) {
+        if (myTask != null) myTask.cancel();
+    }
+
 
 }
