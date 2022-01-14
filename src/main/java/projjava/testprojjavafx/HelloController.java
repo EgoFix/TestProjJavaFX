@@ -27,6 +27,7 @@ public class HelloController {
     @FXML
     private Button Hello;
 
+
     CalcTask myTask; // экземпляр класса вычислений в контроллере
 
     // стандартная реализация

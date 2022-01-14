@@ -1,6 +1,10 @@
 package projjava.testprojjavafx;
 
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.text.Text;
+
+
 
 public class CalcTask extends Task {
     @Override
@@ -11,6 +15,17 @@ public class CalcTask extends Task {
 
     final int MAX_WORK = 100;
 
+    private Text done;
+
+    public Text getDone() {
+        return done;
+    }
+
+    private void method_2(){
+        done = new Text("Done");
+        done.visibleProperty().setValue(false);
+
+    }
 
     private void metod_1() {
         updateMessage("Идет работа");
@@ -33,4 +48,7 @@ public class CalcTask extends Task {
         System.out.println(message);
         super.updateMessage(message);
     }
+
+    @FXML
+    private Text done;
 }

@@ -13,5 +13,6 @@
    <ProgressBar fx:id="bar" prefWidth="200.0" progress="0.0" />
 
     <Label fx:id="welcomeText" />
+   <Text fx:id="done" strokeType="OUTSIDE" strokeWidth="0.0" text="Done" />
     <Button fx:id="Hello" text="Hello!" />
 </VBox>
